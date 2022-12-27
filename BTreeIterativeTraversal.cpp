@@ -261,10 +261,16 @@ int Tree::CountOfNodes(Node* p) { //Don't run this with iterative preorder becau
     else return CountOfNodes(p->lchild) + CountOfNodes(p->rchild) + 1; //Current node + number of left children + number of right children 
 }
 
-int Tree::Height(Node* p) { //function to return tree's height 
-    if (p->lchild) return Height(p->lchild) + 1; //if left direction exists choose it and add one to height 
-    else if (p->rchild) return Height(p->rchild) + 1; //else if right direction exists choose it and add one to height 
-    else return 0; //else there is no further height, so return 0 
+int Tree::Height(Node* p) { //function to return tree's height. height of single node is considered as 1  
+    if (p) {
+        if ((p->lchild) && (p->rchild)) {
+            return std::max(Height(p->lchild) + 1, Height(p->rchild) + 1); //return max height of left and right child 
+        }
+        else if (p->lchild) return Height(p->lchild) + 1; //return height of left child +1
+        else if (p->rchild) return Height(p->rchild) + 1; //return height of right child +1
+        else return 1;
+    }
+    else return 0;
 }
 
 int Tree::CountLeafNodes(Node* p) { //Don't run this with iterative preorder because iterative preorder changes the original tree. This function returns the number of leaf nodes of tree  
