@@ -2,6 +2,7 @@
 C++ code for sorting algorithms 
 1. Bubble Sort- In bubble sort if we perform 1 pass we get the largest element. If we perform 2 passes we get the second largest element and so on 
 2. Insertion Sort- we won't get any info from a single pass like the largest element in first pass in case of bubble sort. Also insertion sort is better implemented using linked list than array as no shifting in linked list
+3. Selection sort- If we perform 1 pass we get the smallest element. After the 2nd pass we get the second smallest element and so on 
 */
 
 #include<iostream>
@@ -66,10 +67,32 @@ void InsertionSort(Node* first) { //Create Sorted linked list from user input us
 		}
 		t->next = p; //insert the element after the tail pointer 
 		p->next = n; //'p' will point to 'n' after insertion (even if 'n' is NULL this works)
-		n = first->next; //re-initialize 'n'
-		t = first; //re-initialize 't' 
 		cout << "Enter the next element. Enter -1 to stop creating linked list: " << endl; //user to enter the next element to continue insertion 
 		cin >> element;
+		while ((p->data < element) && (p->next == NULL)) { //if element is to be inserted in an already sorted list (adaptive code)
+			Node* sorted_node;
+			sorted_node = new Node;
+			sorted_node->data = element;
+			sorted_node->next = NULL;
+			p->next = sorted_node;
+			p = sorted_node;
+			cout << "Inserting at last of sorted list, enter the next element. Enter -1 to stop creating linked list: " << endl; //user to enter the next element to continue insertion 
+			cin >> element;
+		}
+		n = first->next; //re-initialize 'n'
+		t = first; //re-initialize 't' 
+	}
+}
+
+void SelectionSort(int A[], int n) { //Function to sort array using selection sort 
+	for (int i = 0; i < n; i++) { //iterate over all elements 
+		int j = i; //used for exchange of min element with 'i'
+		for (int k = j + 1; k < n; k++) { //checks elements further than 'j' to bring 'j' to min value 
+			if (A[j] > A[k]) {
+				j = k; //value at 'k' is less than that at 'j' so bring 'j' to 'k' and advance 'k' further  
+			}
+		}
+		if (j != i) Swap(A[i], A[j]); //once 'k' is out of the array scope we have the min element at 'j' to be swapped with element at 'i'
 	}
 }
 
@@ -95,12 +118,19 @@ int main() {
 	//int A[] = { 1,2,3,4,5,6,7,10,9,8};
 	//int A[] = { 10,9,8,7,6,5,4,3,2,1 };
 	int n = sizeof(A) / sizeof(int);
+	cout << endl << "Array A after performing bubble sort: ";
 	BubbleSort(A, n);
 	PrintArray(A,n);
 	Node* first;
 	first = new Node;
 	first->data = 0;
 	first->next = NULL;
+	cout << endl << "Performing insertion sort: " << endl;
 	InsertionSort(first);
 	DisplayLinkedList(first);
+	int B[] = { 10,9,8,7,5,4,3,2,1 };
+	int n_b = sizeof(B) / sizeof(int);
+	cout << endl << "Array B after performing selection sort: ";
+	SelectionSort(B, n_b);
+	PrintArray(B, n_b);
 }
