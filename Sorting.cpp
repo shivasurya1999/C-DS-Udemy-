@@ -1,8 +1,11 @@
 /*
+* Created by: Shiva Surya Lolla
+* Date: 4th January 2022
 C++ code for sorting algorithms 
 1. Bubble Sort- In bubble sort if we perform 1 pass we get the largest element. If we perform 2 passes we get the second largest element and so on 
 2. Insertion Sort- we won't get any info from a single pass like the largest element in first pass in case of bubble sort. Also insertion sort is better implemented using linked list than array as no shifting in linked list
-3. Selection sort- If we perform 1 pass we get the smallest element. After the 2nd pass we get the second smallest element and so on 
+3. Selection sort- If we perform 1 pass we get the smallest element. After the 2nd pass we get the second smallest element and so on. We select the index and find element for the index in this 
+4. Quick Sort - We select the element and then find an index for that element so that elements on one side are less than the element and on the other side of the index are greater than the element 
 */
 
 #include<iostream>
@@ -15,6 +18,7 @@ public:
 };
 
 void Swap(int &a, int &b) { //function that swaps elements. pass by reference is used to change the original values when passed 
+	if (a == b) return;
 	int temp;
 	temp = a;
 	a = b;
@@ -96,6 +100,26 @@ void SelectionSort(int A[], int n) { //Function to sort array using selection so
 	}
 }
 
+void QuickSort(int A[],int s,int l) { //Function to sort array using quick sort 
+	if (s==l) return; //if only single element return 
+	else {
+		int n = l; //initiate n as last element of function (l) for later use 
+		int pivot = s; //take pivot as starting element of function (s)
+		do {
+			if (A[s] <= A[pivot]) s++; //increment s if the element at that index is less than pivot because we want all smaller elements to be on one side of pivot 
+			else { //if we encounter an element at s which is greater than pivot, it is to be swapped with a smaller element 
+				while ((A[l] > A[pivot])&&(s<l)) l--; //while element at l is less than pivot value decrement l 
+				Swap(A[s], A[l]); //if element at l has stopped being greater than pivot swap that element with s which is greataer than pivot 
+			}
+		} while (s < l); //while starting index is less than ending index keep looping 
+		l--;
+		if (A[pivot] < A[l + 1]) Swap(A[pivot], A[l]);  //take the pivot element to a position so that on one side all elements are less than its value and on other side all elements are greater than its value 
+		else Swap(A[pivot], A[l + 1]); //in case of two element and descending order, the above statement won't work so the ncurrent statement
+		QuickSort(A, 0, l ); //recursively sort the elements less than pivot element 
+		QuickSort(A, s, n); //recursively sort the elements greater than pivot element
+	}
+}
+
 void DisplayLinkedList(Node* first) { //Display linked list given its header node 
 	Node* p;
 	p = new Node;
@@ -133,4 +157,10 @@ int main() {
 	cout << endl << "Array B after performing selection sort: ";
 	SelectionSort(B, n_b);
 	PrintArray(B, n_b);
+	int C[] = { 15,16,17,6,5,4,3,2,1 };
+	//int C[] = { 16,17 };
+	int n_c = sizeof(C) / sizeof(int);
+	cout << endl << "Array C after performing quick sort: ";
+	QuickSort(C, 0, n_c-1);
+	PrintArray(C, n_c);
 }
