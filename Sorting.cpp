@@ -6,9 +6,11 @@ C++ code for sorting algorithms
 2. Insertion Sort- we won't get any info from a single pass like the largest element in first pass in case of bubble sort. Also insertion sort is better implemented using linked list than array as no shifting in linked list
 3. Selection sort- If we perform 1 pass we get the smallest element. After the 2nd pass we get the second smallest element and so on. We select the index and find element for the index in this 
 4. Quick Sort - We select the element and then find an index for that element so that elements on one side are less than the element and on the other side of the index are greater than the element 
+5. Merge Sort - Starting from two elements each, perform multiple passes by merging two times more number of elements than the previous pass until merge sort is done for the entire array 
 */
 
 #include<iostream>
+#include<cmath>
 using namespace std;
 
 class Node {
@@ -120,6 +122,61 @@ void QuickSort(int A[],int s,int l) { //Function to sort array using quick sort
 	}
 }
 
+void Merge(int A[],int low,int mid,int high) { //Function that merges elements of two lists in an array by relatively sorting them. middle is the position which separates the lists in the array   
+	int n = high + 1; //number of element of the array 
+	int k = low; //starting index of array B 
+	int* B; //create an array for the merged elements 
+	B = new int[n];
+	int i = low; //list 1 starts from low 
+	int j = mid + 1; //list 2 starts from middle + 1 
+	while ((i <= mid) && (j <= high)) { //while any one of the lists is not fully exhausted 
+		if (A[i] < A[j]) { //if element of list 1 is less than element of list 2 
+			B[k] = A[i]; //add list 1 element to B 
+			i++; //increment index of the list 1
+		}
+		else { 
+			B[k] = A[j]; //add list 2 element to B 
+			j++; //increment index of the list 2
+		}
+		k++; //increment the index of B to further include elements from list 1 or list 2 
+	}
+	for (; i <= mid; i++) { //if elements of list 1 remain after the above steps, add all of them to B 
+		B[k] = A[i];
+		k++;
+	}
+	for (; j <= high; j++) { //if elements of list 2 remain after the above steps, add all of them to B 
+		B[k] = A[j];
+		k++;
+	}
+	for (int l = low; l <= high; l++) { //copy elements of B into A so that A contains the merged lists (sorted)
+		A[l] = B[l];
+	}
+}
+
+void IterativeMergeSort(int A[],int n) {//Given an array and the number of elements in the array the function uses merge sort iteratively to sort array elements 
+	int p, i, low, mid, high;
+	for (p = 2; p <= n; p = p*2) { //in first pass two elements each are considered, in 2nd pass 4 elements each are considered and so on for merging 
+		for (i = 0; i + p - 1 < n; i=i+p) {  //'i' will be used to set low,mid and high in each array being considered for merging 
+			low = i; 
+			high = i + p - 1;
+			mid = (low + high) / 2;
+			Merge(A, low, mid, high); //merge the two sub arrays in the array being considered
+		}
+	}
+	if (p / 2 < n) { //if the number of elements in A are not powers of 2 
+		Merge(A, 0, p / 2 - 1, n-1); //Merge the remaining elements with the sorted array 
+	}
+}
+
+void RecursiveMergeSort(int A[],int low,int high) { //Given an array, its low index and high index, sorts all the elements between the indices (low and high inclusive)
+	if (low < high) { 
+		int mid = (low + high) / 2;
+		RecursiveMergeSort(A,low,mid); //sort the left half
+		RecursiveMergeSort(A,mid+1,high); //sort the right half
+		Merge(A, low, mid, high); //merge both halves 
+	}
+}
+
 void DisplayLinkedList(Node* first) { //Display linked list given its header node 
 	Node* p;
 	p = new Node;
@@ -138,6 +195,7 @@ void PrintArray(int A[],int n) {
 }
 
 int main() {
+	/*Bubble sort*/
 	int A[] = {5,3,8,2,7,6,1,9,15,20,10,4};
 	//int A[] = { 1,2,3,4,5,6,7,10,9,8};
 	//int A[] = { 10,9,8,7,6,5,4,3,2,1 };
@@ -145,6 +203,8 @@ int main() {
 	cout << endl << "Array A after performing bubble sort: ";
 	BubbleSort(A, n);
 	PrintArray(A,n);
+
+	/*Insertion sort*/
 	Node* first;
 	first = new Node;
 	first->data = 0;
@@ -152,15 +212,31 @@ int main() {
 	cout << endl << "Performing insertion sort: " << endl;
 	InsertionSort(first);
 	DisplayLinkedList(first);
+
+	/*Selection sort*/
 	int B[] = { 10,9,8,7,5,4,3,2,1 };
 	int n_b = sizeof(B) / sizeof(int);
 	cout << endl << "Array B after performing selection sort: ";
 	SelectionSort(B, n_b);
 	PrintArray(B, n_b);
-	int C[] = { 15,16,17,6,5,4,3,2,1 };
-	//int C[] = { 16,17 };
+
+	/*Quick sort*/
+	int C[] = { 1,2,3,4,5,6,7,10,9,8 };
 	int n_c = sizeof(C) / sizeof(int);
 	cout << endl << "Array C after performing quick sort: ";
 	QuickSort(C, 0, n_c-1);
 	PrintArray(C, n_c);
+
+	/*Merge sort*/
+	int D[] = { 10,9,8,7,6,5,4,3,2,1 };
+	int n_d = sizeof(D) / sizeof(int);
+	IterativeMergeSort(D, n_d);
+	cout <<endl<< "Array after merging: ";
+	PrintArray(D,n_d);
+	int E[] = { 5,6,7,8,9,1,2,3,4 };
+	int n_e = sizeof(E) / sizeof(int);
+	RecursiveMergeSort(E,0,n_e-1);
+	cout << endl << "Array after merging recursively: ";
+	PrintArray(E, n_e);
+
 }
