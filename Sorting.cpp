@@ -7,6 +7,7 @@ C++ code for sorting algorithms
 3. Selection sort- If we perform 1 pass we get the smallest element. After the 2nd pass we get the second smallest element and so on. We select the index and find element for the index in this 
 4. Quick Sort - We select the element and then find an index for that element so that elements on one side are less than the element and on the other side of the index are greater than the element 
 5. Merge Sort - Starting from two elements each, perform multiple passes by merging two times more number of elements than the previous pass until merge sort is done for the entire array 
+6. Count Sort - Use an extra array that maintains count of element values of A by using those values as its indices and then access those indices one by one to get the increasing order of element values of A  
 */
 
 #include<iostream>
@@ -177,6 +178,36 @@ void RecursiveMergeSort(int A[],int low,int high) { //Given an array, its low in
 	}
 }
 
+int ReturnArrayMax(int A[],int n) { //given array and the number of elements in it, returns max value of the array 
+	int i = 0;
+	int max = A[i];
+	for (; i < n; i++) {
+		if (A[i] > max) max = A[i];
+	}
+	return max;
+}
+
+void CountSort(int A[],int n) { //given array and its number of elements, uses count sort to sort its elements 
+	int max;
+	max = ReturnArrayMax(A,n); //get the max value in the array 
+	int* count_array; 
+	count_array = new int[max + 1]; //create a new array with the number of elements equal to the value of 'max+1' because the indexing in C++ arrays starts from zero 
+	for (int j = 0; j < max+1; j++) { //initialize the elements of the array that maintains count of element values of A to be zero 
+		count_array[j] = 0;
+	}
+	for (int i = 0; i < n; i++) {  //maintain count of elements of A
+		(count_array[A[i]])++;
+	}
+	int l = 0;
+	for (int k = 0; k <= max; k++) { //the first non-zero index of count_array is the smallest element of A and so on. We get the sorted order by using this property of count_array 
+		while (count_array[k]) {
+			A[l] = k; //change the array A using count_array for sorting elements of A
+			l++;
+			(count_array[k])--;
+		}
+	}
+}
+
 void DisplayLinkedList(Node* first) { //Display linked list given its header node 
 	Node* p;
 	p = new Node;
@@ -238,5 +269,12 @@ int main() {
 	RecursiveMergeSort(E,0,n_e-1);
 	cout << endl << "Array after merging recursively: ";
 	PrintArray(E, n_e);
+
+	/*Count sort*/
+	int F[] = { 11,13,7,12,16,9,24,5,10,3 };
+	int n_f = sizeof(F) / sizeof(int);
+	CountSort(F, n_f);
+	cout << endl << "Array after count sort: ";
+	PrintArray(F, n_f);
 
 }
