@@ -3,7 +3,9 @@ Created by: Shiva Surya Lolla
 Date: 6th January 2023 
 C++ code for hashing methods 
 A hash map stores elements in the form of array of linked lists. A power factor (lambda) is defined for every hash map which is the avg number of elements in the linked list of each index of the array
-In the below hash map, elements with the same remainder when divided by 10 are stored at the index equal to that remainder in sorted linked list manner 
+In the below hash map, 
+1. Chaining - elements stored in linked list in array of linked lists using hash function. Elements with the same remainder when divided by 10 are stored at the index equal to that remainder in sorted linked list manner 
+2. Linear Probing - maximum power factor can be 0.5. We cannot delete elements using linear probing because we will have to shift other elements as per the spaces created (rehashing) which is difficult 
 */
 
 #include<iostream>
@@ -79,7 +81,7 @@ bool SearchHashMap(Node** H,int elem) { //Searches hash map H for elem and retur
 	return 0;
 }
 
-void DeleteInHash(int elem,Node** H) {
+void DeleteInHash(int elem,Node** H) { //Function to delete elem in hash map H 
 	cout << "Request to delete element " << elem << " from the Hash Map." << endl;
 	if (SearchHashMap(H, elem)) { //if elem is found in Hash map 
 		Node* n;
@@ -99,7 +101,35 @@ void DeleteInHash(int elem,Node** H) {
 	else cout << "Element not found in Hash Map so cannot delete." << endl;
 }
 
+void InsertLP(int A[], int elem) { //Function to insert elem in an array using linear probing 
+	if (!A[elem % 10]) { //if no value is present at index elem%10 
+		A[elem % 10] = elem; //insert at elem%10
+	}
+	else { //else insert in the next available space in the hash map 
+		int i;
+		for (i = 0; A[i + elem % 10]; i = i++) {
+
+		}
+		A[i + elem % 10] = elem;
+	}
+}
+
+void SearchLP(int A[],int elem) { //Function to search elem in array where elements were inserted using linear probing 
+	if (A[elem % 10] == elem) cout << "Element found at index: " << elem % 10 << endl; //if elem found at index elem%10 
+	else { 
+		int i;
+		for (i = 0; A[i + elem % 10]; i = i++) { //keep checking the consecutive array indices until elem is found  
+			if (A[i + elem % 10] == elem) {
+				cout << "Element found at index: " << i + elem % 10 << endl;
+				break;
+			}
+		}
+		if (!A[i + elem % 10]) cout << "Element not found in hash table." << endl; //if there is a white space while searching => elem does not exist in hash table 
+	}
+}
+
 int main() {
+	/*Chaining*/
 	int A[] = {16,12,25,39,6,122,5,68,75};
 	/*Hash map initialization starts*/
 	Node** H;
@@ -113,10 +143,17 @@ int main() {
 		H[j] = head;
 	}
 	/*Hash map initialization ends*/
-
 	CreateHashMap(A,H,n);
 	int elem = 122;
 	SearchHashMap(H, elem);
 	DeleteInHash(122, H);
 	SearchHashMap(H, elem);
+
+	/*Linear probing*/
+	int HT[10] = { 0 };
+	InsertLP(HT, 12);
+	InsertLP(HT,25);
+	InsertLP(HT,35);
+	InsertLP(HT,26);
+	SearchLP(HT,35);
 }
