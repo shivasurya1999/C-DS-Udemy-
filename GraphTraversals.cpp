@@ -3,6 +3,7 @@ Created by: Shiva Surya Lolla
 Date: 8th January 2023
 C++ code for graph traversal using:
 1. Breadth First Search (BFS)
+2. Depth First Search (DFS)
 */
 
 #include<iostream>
@@ -91,6 +92,37 @@ void BFS(Node** G, Queue Q, int V[]) { //Program to implement BFS and print the 
 	}
 }
 
+/*Algorithm for DFS
+1. Take adjacency list representation of a graph as input 
+2. Create an array 'V' for maintaining the visited nodes initially containing all zeros 
+3. Start with a node of the graph. Print its value, update the value at index 'V' as 1 and run DFS from its next node 
+*/
+
+int isAllVisited(int V[]) { //calculates sum of all array elements and returns it 
+	int sum = 0;
+	for (int i = 1; i <= 6; i++) {
+		sum += V[i];
+	}
+	return sum;
+}
+
+void DFS(Node** G,int V[],int elem){ //Program to implement DFS and print the explored nodes to the terminal. G is an adjacency list graph, V is an array that indicates an index of it is visited or not
+	if (isAllVisited(V) == 6) return; //if all nodes in graph are traversed then return 
+	else {
+		if (V[elem] == 0) { //if element is not visited 
+			V[elem] = 1; //visit it
+			cout << elem << ", "; //print its value 
+			Node* explored; 
+			explored = new Node;
+			explored = G[elem]->next; //go to its neighbour in graph 
+			while (explored) { //while neighbour is not null 
+				if (V[explored->data] != 0) explored = explored->next; //if that neighbour has already been explored, then go to the neighbour's neighbour 
+				else DFS(G, V, explored->data); //if neighbour not explored, perform DFS from it 
+			}
+		}
+	}
+}
+
 int main() {
 	Node** G;
 	G = new Node * [7];
@@ -107,5 +139,12 @@ int main() {
 	for (int j = 0; j <= 6; j++) {
 		V[j] = 0;
 	}
+	cout << endl << "Traversal using BFS: ";
 	BFS(G,Q,V);
+
+	for (int j = 0; j <= 6; j++) {
+		V[j] = 0;
+	}
+	cout <<endl<<"Traversal using DFS: ";
+	DFS(G,V,1);
 }
